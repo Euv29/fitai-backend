@@ -127,10 +127,10 @@ app.get('/api-docs.json', (_req, res) => {
             return res.status(500).json({ error: 'Swagger Spec not loaded' });
         }
         logger.info(`Serving Swagger Spec: ${JSON.stringify(swaggerSpec.info)}`);
-        res.send(swaggerSpec);
+        return res.send(swaggerSpec);
     } catch (error) {
         logger.error('Error serving Swagger Spec', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
