@@ -82,4 +82,109 @@ router.post(
     authController.verifyCode
 );
 
+/**
+ * @swagger
+ * /api/v1/auth/signup/email:
+ *   post:
+ *     summary: Cadastro com E-mail e Senha
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email: { type: string, format: email }
+ *               password: { type: string, minLength: 6 }
+ *     responses:
+ *       201: { description: Usuário criado, verifique o e-mail }
+ */
+router.post('/signup/email', authController.signUpEmail);
+
+/**
+ * @swagger
+ * /api/v1/auth/verify/email:
+ *   post:
+ *     summary: Verifica código do E-mail e faz login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, code]
+ *             properties:
+ *               email: { type: string, format: email }
+ *               code: { type: string }
+ *     responses:
+ *       200: { description: Login realizado }
+ */
+router.post('/verify/email', authController.verifyEmail);
+
+/**
+ * @swagger
+ * /api/v1/auth/login/email:
+ *   post:
+ *     summary: Login com E-mail e Senha
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email: { type: string, format: email }
+ *               password: { type: string }
+ *     responses:
+ *       200: { description: Login realizado }
+ */
+router.post('/login/email', authController.loginEmail);
+
+/**
+ * @swagger
+ * /api/v1/auth/forgot-password:
+ *   post:
+ *     summary: Solicita recuperação de senha
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string, format: email }
+ *     responses:
+ *       200: { description: Código enviado (se e-mail existir) }
+ */
+router.post('/forgot-password', authController.forgotPassword);
+
+/**
+ * @swagger
+ * /api/v1/auth/reset-password:
+ *   post:
+ *     summary: Redefine a senha usando o código
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, code, newPassword]
+ *             properties:
+ *               email: { type: string, format: email }
+ *               code: { type: string }
+ *               newPassword: { type: string, minLength: 6 }
+ *     responses:
+ *       200: { description: Senha alterada }
+ */
+router.post('/reset-password', authController.resetPassword);
+
 export default router;
