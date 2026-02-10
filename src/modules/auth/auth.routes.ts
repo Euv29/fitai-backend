@@ -101,7 +101,11 @@ router.post(
  *     responses:
  *       201: { description: Usuário criado, verifique o e-mail }
  */
-router.post('/signup/email', authController.signUpEmail);
+router.post(
+    '/signup/email',
+    validate(validationSchemas.signUpEmailSchema),
+    authController.signUpEmail
+);
 
 /**
  * @swagger
@@ -122,7 +126,11 @@ router.post('/signup/email', authController.signUpEmail);
  *     responses:
  *       200: { description: Login realizado }
  */
-router.post('/verify/email', authController.verifyEmail);
+router.post(
+    '/verify/email',
+    validate(validationSchemas.verifyEmailSchema),
+    authController.verifyEmail
+);
 
 /**
  * @swagger
@@ -143,7 +151,11 @@ router.post('/verify/email', authController.verifyEmail);
  *     responses:
  *       200: { description: Login realizado }
  */
-router.post('/login/email', authController.loginEmail);
+router.post(
+    '/login/email',
+    validate(validationSchemas.loginEmailSchema),
+    authController.loginEmail
+);
 
 /**
  * @swagger
@@ -163,7 +175,11 @@ router.post('/login/email', authController.loginEmail);
  *     responses:
  *       200: { description: Código enviado (se e-mail existir) }
  */
-router.post('/forgot-password', authController.forgotPassword);
+router.post(
+    '/forgot-password',
+    validate(validationSchemas.forgotPasswordSchema),
+    authController.forgotPassword
+);
 
 /**
  * @swagger
@@ -185,6 +201,10 @@ router.post('/forgot-password', authController.forgotPassword);
  *     responses:
  *       200: { description: Senha alterada }
  */
-router.post('/reset-password', authController.resetPassword);
+router.post(
+    '/reset-password',
+    validate(validationSchemas.resetPasswordSchema),
+    authController.resetPassword
+);
 
 export default router;

@@ -55,6 +55,41 @@ export const validationSchemas = {
             }),
     }),
 
+    signUpEmailSchema: Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().min(6).required(),
+    }),
+
+    verifyEmailSchema: Joi.object({
+        email: Joi.string().email().required(),
+        code: Joi.string()
+            .pattern(/^\d{6}$/)
+            .required()
+            .messages({
+                'string.pattern.base': 'Código deve ter 6 dígitos',
+            }),
+    }),
+
+    loginEmailSchema: Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().required(),
+    }),
+
+    forgotPasswordSchema: Joi.object({
+        email: Joi.string().email().required(),
+    }),
+
+    resetPasswordSchema: Joi.object({
+        email: Joi.string().email().required(),
+        code: Joi.string()
+            .pattern(/^\d{6}$/)
+            .required()
+            .messages({
+                'string.pattern.base': 'Código deve ter 6 dígitos',
+            }),
+        newPassword: Joi.string().min(6).required(),
+    }),
+
     // Profile schemas
     profileCompletionSchema: Joi.object({
         name: Joi.string().min(2).max(100).required(),
