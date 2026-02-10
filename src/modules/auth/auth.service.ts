@@ -401,105 +401,107 @@ export class AuthService {
     }
 
     // Verify code and login user (Phone)
+    async verifyCode(
+        phone: string,
+        code: string
+    ): Promise<{ token: string; refreshToken: string; isNewUser: boolean }> {
         try {
-    // Get latest unverified code for this phone
-    const { data: verificationData, error: fetchError } = await this.db
-        .from('verification_codes')
-        .select('*')
-        .eq('phone', phone)
-        .eq('verified', false)
-        .gt('expires_at', new Date().toISOString())
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+            // Get latest unverified code for this phone
+            const { data: verificationData, error: fetchError } = await this.db
+                .from('verification_codes')
+                .select('*')
+                .eq('phone', phone)
+                .eq('verified', false)
+                .gt('expires_at', new Date().toISOString())
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
 
-    if (fetchError || !verificationData) {
-        throw new AppError(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.CODE_EXPIRED);
-    }
+            if (fetchError || !verificationData) {
+                throw new AppError(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.CODE_EXPIRED);
+            }
 
-    // Verify code
-    const isValid = await bcrypt.compare(code, verificationData.code_hash);
+            // Verify code
+            const isValid = await bcrypt.compare(code, verificationData.code_hash);
 
-    if (!isValid) {
-        // Increment attempts
-        const newAttempts = verificationData.attempts + 1;
-        await this.db
-            .from('verification_codes')
-            .update({ attempts: newAttempts })
-            .eq('id', verificationData.id);
+            if (!isValid) {
+                // Increment attempts
+                const newAttempts = verificationData.attempts + 1;
+                await this.db
+                    .from('verification_codes')
+                    .update({ attempts: newAttempts })
+                    .eq('id', verificationData.id);
 
-        if (newAttempts >= 5) {
-            throw new AppError(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.TOO_MANY_ATTEMPTS);
-        }
+                if (newAttempts >= 5) {
+                    throw new AppError(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.TOO_MANY_ATTEMPTS);
+                }
 
-        throw new AppError(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.CODE_INVALID);
-    }
+                throw new AppError(HTTP_STATUS.BAD_REQUEST, ERROR_MESSAGES.CODE_INVALID);
+            }
 
-    // Mark code as verified
-    await this.db
-        .from('verification_codes')
-        .update({ verified: true })
-        .eq('id', verificationData.id);
+            // Mark code as verified
+            await this.db
+                .from('verification_codes')
+                .update({ verified: true })
+                .eq('id', verificationData.id);
 
-    // Check if user exists
-    let { data: user } = await this.db
-        .from('users')
-        .select('*')
-        .eq('phone', phone)
-        .single();
+            // Check if user exists
+            let { data: user } = await this.db
+                .from('users')
+                .select('*')
+                .eq('phone', phone)
+                .single();
 
-    let isNewUser = false;
+            let isNewUser = false;
 
-    if (!user) {
-        // Create new user
-        const { data: newUser, error: createError } = await this.db
-            .from('users')
-            .insert({
-                phone,
-                phone_country_code: '+351',
-                preferred_language: 'pt-BR',
-                units: 'metric',
-                profile_completed: false,
-            })
-            .select()
-            .single();
+            if (!user) {
+                // Create new user
+                const { data: newUser, error: createError } = await this.db
+                    .from('users')
+                    .insert({
+                        phone,
+                        phone_country_code: '+351',
+                        preferred_language: 'pt-BR',
+                        units: 'metric',
+                        profile_completed: false,
+                    })
+                    .select()
+                    .single();
 
-        if (createError || !newUser) {
-            logger.error('Failed to create user', { error: createError });
+                if (createError || !newUser) {
+                    logger.error('Failed to create user', { error: createError });
+                    throw new AppError(HTTP_STATUS.INTERNAL_ERROR, ERROR_MESSAGES.INTERNAL_ERROR);
+                }
+
+                user = newUser;
+                isNewUser = true;
+
+                // Create trial subscription
+                const trialEndsAt = new Date(
+                    Date.now() + TRIAL_DURATION_DAYS * 24 * 60 * 60 * 1000
+                );
+
+                const { error: subError } = await this.db.from('subscriptions').insert({
+                    user_id: user.id,
+                    plan: 'free_trial',
+                    status: 'trialing',
+                    trial_ends_at: trialEndsAt.toISOString(),
+                    current_period_start: new Date().toISOString(),
+                    current_period_end: trialEndsAt.toISOString(),
+                });
+
+                if (subError) {
+                    logger.error('Failed to create subscription', { error: subError });
+                }
+
+                logger.info('New user created with trial subscription', { userId: user.id });
+            }
+
+            return this.generateTokens(user);
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            logger.error('Verify code error', { error });
             throw new AppError(HTTP_STATUS.INTERNAL_ERROR, ERROR_MESSAGES.INTERNAL_ERROR);
         }
-
-        user = newUser;
-        isNewUser = true;
-
-        // Create trial subscription
-        const trialEndsAt = new Date(
-            Date.now() + TRIAL_DURATION_DAYS * 24 * 60 * 60 * 1000
-        );
-
-        const { error: subError } = await this.db.from('subscriptions').insert({
-            user_id: user.id,
-            plan: 'free_trial',
-            status: 'trialing',
-            trial_ends_at: trialEndsAt.toISOString(),
-            current_period_start: new Date().toISOString(),
-            current_period_end: trialEndsAt.toISOString(),
-        });
-
-        if (subError) {
-            logger.error('Failed to create subscription', { error: subError });
-        }
-
-        logger.info('New user created with trial subscription', { userId: user.id });
-    }
-
-            );
-
-    return this.generateTokens(user);
-} catch (error) {
-    if (error instanceof AppError) throw error;
-    logger.error('Verify code error', { error });
-    throw new AppError(HTTP_STATUS.INTERNAL_ERROR, ERROR_MESSAGES.INTERNAL_ERROR);
-}
     }
 }
