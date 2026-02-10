@@ -102,7 +102,6 @@ app.get('/api-docs.json', (_req, res) => {
             logger.error('Swagger Spec is undefined');
             return res.status(500).json({ error: 'Swagger Spec not loaded' });
         }
-        logger.info(`Serving Swagger Spec: ${JSON.stringify(swaggerSpec.info)}`);
         return res.send(swaggerSpec);
     } catch (error) {
         logger.error('Error serving Swagger Spec', error);
