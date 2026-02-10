@@ -140,11 +140,15 @@ app.use(errorHandler);
 // START SERVER
 // =====================================================
 
-app.listen(PORT, () => {
-    logger.info(`🚀 FitAI Backend running on port ${PORT}`);
-    logger.info(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-    logger.info(`🌐 CORS enabled for: ${corsOptions.origin.join(', ')}`);
-});
+// Only start server if run directly (not when imported by Vercel)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        logger.info(`🚀 FitAI Backend running on port ${PORT}`);
+        logger.info(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+        logger.info(`🌐 CORS enabled for: ${corsOptions.origin.join(', ')}`);
+    });
+}
+
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason: Error) => {
