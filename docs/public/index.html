@@ -380,10 +380,23 @@
     let apiSpec = null;
 
     async function initDocs() {
+      const loaderText = document.querySelector('#loader p');
       try {
-        const response = await fetch('/api-docs.json');
-        apiSpec = await response.json();
+        if (loaderText) loaderText.innerText = 'Buscando especificações da API (/api-docs.json)...';
+        console.log('Fetching /api-docs.json...');
 
+        const response = await fetch('/api-docs.json');
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        if (loaderText) loaderText.innerText = 'Processando JSON...';
+        apiSpec = await response.json();
+        console.log('API Spec loaded:', apiSpec);
+
+        if (loaderText) loaderText.innerText = 'Renderizando interface...';
         renderUI(apiSpec);
 
         // Hide loader
@@ -399,7 +412,15 @@
 
       } catch (error) {
         console.error('Failed to load API spec:', error);
-        document.getElementById('api-description').innerText = 'Erro ao carregar a documentação.';
+        const errorMsg = error.message || error.toString();
+        document.getElementById('api-description').innerHTML = `<span class="text-red-500">Erro ao carregar documentação: ${errorMsg}</span>`;
+        document.getElementById('loader').innerHTML = `
+            <div class="text-center">
+                <p class="text-red-500 font-bold mb-2">Erro ao carregar</p>
+                <p class="text-zinc-400 text-sm mb-4">${errorMsg}</p>
+                <button onclick="location.reload()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-white transition-colors">Tentar Novamente</button>
+            </div>
+        `;
       }
     }
 
