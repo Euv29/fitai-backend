@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { logger } from '../utils/logger';
+import logger from '../shared/utils/logger.util';
 
 export class EmailService {
     private transporter: nodemailer.Transporter;
