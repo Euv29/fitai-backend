@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitAI API | Documentação</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              950: '#09090b',
+            },
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #09090b;
+      color: #fafafa;
+    }
+
+    .nav-link.active {
+      background-color: #27272a;
+      color: #fafafa;
+      font-weight: 500;
+    }
+
+    .section-content {
+      display: none;
+    }
+
+    .section-content.active {
+      display: block;
+    }
+
+    pre[class*="language-"] {
+      background: #18181b !important;
+      border: 1px solid #27272a;
+      border-radius: 0.5rem;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #09090b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 10px;
+    }
+
+    .method-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .method-post {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .method-get {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+
+    .method-put {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .method-delete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased text-zinc-200">
+  <div id="loader" class="fixed inset-0 bg-zinc-950 z-50 flex items-center justify-center">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-zinc-400 animate-pulse">Carregando documentação...</p>
+    </div>
+  </div>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 border-r border-zinc-800 hidden md:flex flex-col fixed h-screen overflow-y-auto">
+      <div class="p-6">
+        <a href="#welcome" class="flex items-center gap-2 mb-8 cursor-pointer">
+          <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center font-bold text-white">F</div>
+          <span class="text-xl font-bold tracking-tight text-white">FitAI <span
+              class="text-zinc-500 font-normal">Docs</span></span>
+        </a>
+
+        <nav id="sidebar-nav" class="space-y-6">
+          <div>
+            <a href="#welcome"
+              class="px-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block hover:text-zinc-100 transition-colors">Introdução</a>
+            <a href="#welcome" id="nav-welcome"
+              class="nav-link active flex items-center px-2 py-1.5 text-sm rounded-md hover:bg-zinc-800/50 hover:text-zinc-100 transition-colors">Bem-vindo</a>
+          </div>
+          <!-- Dynamic Nav items will be injected here -->
+        </nav>
+      </div>
+
+      <div class="mt-auto p-6 border-t border-zinc-800">
+        <div id="api-status" class="flex items-center gap-2 text-xs text-zinc-500">
+          <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          API Status: Online
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 md:ml-64 p-8 md:p-12 lg:p-16 max-w-5xl">
+
+      <!-- Default Welcome Section -->
+      <section id="welcome"
+        class="section-content active space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="space-y-4">
+          <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl text-white">Bem-vindo ao FitAI</h1>
+          <p id="api-description" class="text-xl text-zinc-400 max-w-2xl">Carregando informações da API...</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            class="p-6 border border-zinc-800 rounded-xl bg-zinc-900/50 hover:border-zinc-700 transition-colors group cursor-default">
+            <h3 class="font-semibold text-lg text-zinc-100 group-hover:text-brand-500 transition-colors">Automação
+              Swagger</h3>
+            <p class="text-sm text-zinc-500 mt-2">Documentação gerada via OpenAPI 3.0 e JSDoc.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dynamic Sections will be injected here -->
+    </main>
+  </div>
+
+  <!-- JS for dynamic documentation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+  <script>
+    let apiSpec = null;
+
+    async function initDocs() {
+      try {
+        const response = await fetch('/api-docs.json');
+        apiSpec = await response.json();
+
+        renderUI(apiSpec);
+
+        // Hide loader
+        document.getElementById('loader').style.display = 'none';
+
+        // Handle initial hash
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+          showSection(hash);
+        } else {
+          showSection('welcome');
+        }
+
+      } catch (error) {
+        console.error('Failed to load API spec:', error);
+        document.getElementById('api-description').innerText = 'Erro ao carregar a documentação.';
+      }
+    }
+
+    function renderUI(spec) {
+      document.getElementById('api-description').innerText = spec.info.description || '';
+      document.getElementById('api-status').innerHTML = `<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> API Status: Online v${spec.info.version}`;
+
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const mainContent = document.getElementById('main-content');
+
+      // Group paths by tags
+      const tags = {};
+      Object.keys(spec.paths).forEach(path => {
+        const methods = spec.paths[path];
+        Object.keys(methods).forEach(method => {
+          const info = methods[method];
+          const tag = info.tags ? info.tags[0] : 'Geral';
+          if (!tags[tag]) tags[tag] = [];
+          tags[tag].push({ path, method, ...info });
+        });
+      });
+
+      // Render Sidebar and Sections
+      Object.keys(tags).forEach(tag => {
+        const tagId = tag.toLowerCase().replace(/\s+/g, '-');
+
+        // Sidebar Group
+        const group = document.createElement('div');
+        group.className = 'sidebar-group';
+        group.innerHTML = `
+                    <a href="#${tagId}" class="px-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mt-6 mb-2 block hover:text-zinc-100 transition-colors">${tag}</a>
+                    <div id="nav-group-${tagId}" class="space-y-1 ml-1 border-l border-zinc-800"></div>
+                `;
+        sidebarNav.appendChild(group);
+
+        const navGroup = group.querySelector(`#nav-group-${tagId}`);
+
+        // Main Tag Section
+        const section = document.createElement('section');
+        section.id = tagId;
+        section.className = 'section-content space-y-12 pb-24';
+        section.innerHTML = `<h2 class="text-3xl font-bold tracking-tight mb-8 text-white">${tag}</h2>`;
+        mainContent.appendChild(section);
+
+        tags[tag].forEach(endpoint => {
+          const endpointId = `${endpoint.method}-${endpoint.path.replace(/[\/\(\)\{\}]/g, '-')}`;
+
+          // Sidebar sub-link
+          const subLink = document.createElement('a');
+          subLink.href = `#${endpointId}`;
+          subLink.id = `nav-${endpointId}`;
+          subLink.className = `nav-link flex items-center px-4 py-1 text-xs text-zinc-500 rounded-md hover:text-zinc-200 transition-colors`;
+          subLink.innerText = endpoint.summary || endpoint.path;
+          navGroup.appendChild(subLink);
+
+          // Endpoint Card Wrapper (for scrolling)
+          const anchor = document.createElement('div');
+          anchor.id = endpointId;
+          anchor.className = 'scroll-mt-24';
+          section.appendChild(anchor);
+
+          // Card Content
+          const card = document.createElement('div');
+          card.className = 'border border-zinc-800 rounded-lg overflow-hidden bg-zinc-900/40 mt-4';
+          card.innerHTML = `
+                        <div class="px-4 py-3 bg-zinc-800/50 flex items-center justify-between border-b border-zinc-800">
+                            <div class="flex items-center gap-3">
+                                <span class="method-badge method-${endpoint.method}">${endpoint.method}</span>
+                                <span class="text-xs font-mono text-zinc-300">${endpoint.path}</span>
+                            </div>
+                            <span class="text-[10px] text-zinc-500 uppercase tracking-widest">${endpoint.security ? '🔒 Private' : 'Public'}</span>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-white">${endpoint.summary || ''}</h3>
+                                <p class="text-sm text-zinc-500 mt-1">${endpoint.description || ''}</p>
+                            </div>
+                            ${renderParameters(endpoint.parameters)}
+                            ${renderRequestBody(endpoint.requestBody)}
+                            ${renderResponses(endpoint.responses)}
+                        </div>
+                    `;
+          anchor.appendChild(card);
+        });
+      });
+    }
+
+    function getExampleFromSchema(schema) {
+      if (!schema) return null;
+      if (schema.example) return schema.example;
+      if (schema.properties) {
+        const example = {};
+        Object.keys(schema.properties).forEach(key => {
+          const prop = schema.properties[key];
+          if (prop.example) {
+            example[key] = prop.example;
+          } else if (prop.type === 'object') {
+            example[key] = getExampleFromSchema(prop);
+          } else if (prop.type === 'array') {
+            example[key] = [getExampleFromSchema(prop.items)];
+          } else {
+            example[key] = prop.type === 'string' ? "string" : (prop.type === 'boolean' ? true : 123);
+          }
+        });
+        return example;
+      }
+      return null;
+    }
+
+    function renderParameters(params) {
+      if (!params || params.length === 0) return '';
+      const rows = params.map(p => `
+                <tr class="text-xs">
+                    <td class="py-2 font-mono text-brand-500">${p.name}</td>
+                    <td class="py-2 text-zinc-500 capitalize">${p.in}</td>
+                    <td class="py-2 text-zinc-400">${p.description || '-'}</td>
+                </tr>
+            `).join('');
+      return `
+                <div class="space-y-2">
+                    <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Parâmetros</p>
+                    <table class="w-full">
+                        <thead class="border-b border-zinc-800 text-[10px] text-zinc-700 uppercase">
+                            <tr><th class="pb-2 text-left">Nome</th><th class="pb-2 text-left">Local</th><th class="pb-2 text-left">Descrição</th></tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-900">${rows}</tbody>
+                    </table>
+                </div>
+            `;
+    }
+
+    function renderRequestBody(body) {
+      if (!body || !body.content) return '';
+      const content = body.content['application/json'];
+      if (!content || !content.schema) return '';
+      const example = getExampleFromSchema(content.schema);
+      if (!example) return '';
+
+      return `
+                <div class="space-y-2">
+                    <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Exemplo de JSON</p>
+                    <pre class="language-json text-xs"><code>${JSON.stringify(example, null, 2)}</code></pre>
+                </div>
+            `;
+    }
+
+    function renderResponses(responses) {
+      if (!responses) return '';
+      const list = Object.keys(responses).map(code => {
+        const r = responses[code];
+        return `<div class="text-xs flex gap-2">
+                    <span class="font-bold ${code.startsWith('2') ? 'text-green-500/80' : 'text-zinc-600'}">${code}</span>
+                    <span class="text-zinc-500">${r.description}</span>
+                </div>`;
+      }).join('');
+      return `
+                <div class="space-y-2">
+                    <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Respostas</p>
+                    <div class="space-y-1">${list}</div>
+                </div>
+            `;
+    }
+
+    function showSection(targetId) {
+      // Find parent section if target is an endpoint
+      let sectionId = targetId;
+      const endpointElement = document.getElementById(targetId);
+
+      if (endpointElement && endpointElement.closest('section')) {
+        sectionId = endpointElement.closest('section').id;
+      }
+
+      // Toggle visibility
+      document.querySelectorAll('.section-content').forEach(s => {
+        s.classList.toggle('active', s.id === sectionId);
+      });
+
+      // Update Active Link
+      document.querySelectorAll('.nav-link').forEach(l => {
+        const href = l.getAttribute('href').replace('#', '');
+        l.classList.toggle('active', href === targetId);
+      });
+
+      // Scroll into view if it's an endpoint
+      if (endpointElement) {
+        endpointElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      if (window.Prism) Prism.highlightAll();
+    }
+
+    window.addEventListener('load', initDocs);
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) showSection(hash);
+    });
+  </script>
+</body>
+
+</html>
