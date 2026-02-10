@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import dotenv from 'dotenv';
+import path from 'path';
 import { errorHandler, notFoundHandler } from './shared/middleware/error.middleware';
 import logger from './shared/utils/logger.util';
 
