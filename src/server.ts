@@ -15,9 +15,7 @@ import workoutRoutes from './modules/workouts/workouts.routes';
 import exerciseRoutes from './modules/exercises/exercises.routes';
 import chatRoutes from './modules/chat/chat.routes';
 import nutritionRoutes from './modules/nutrition/nutrition.routes';
-import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.config';
-import { getWelcomePage } from './views/welcome.view';
 
 // Load environment variables
 dotenv.config();
@@ -95,10 +93,9 @@ app.use((req: Request, _res: Response, next) => {
 // ROUTES
 // =====================================================
 
-// Root redirect to documentation
-app.get('/', (_req: Request, res: Response) => {
-    res.redirect('/docs');
-});
+// Serve static documentation at root
+app.use(express.static(path.join(__dirname, '../docs/public')));
+app.use('/docs', express.static(path.join(__dirname, '../docs/public')));
 
 // Health check
 app.get('/health', (_req: Request, res: Response) => {
@@ -109,17 +106,10 @@ app.get('/health', (_req: Request, res: Response) => {
     });
 });
 
-// Swagger Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use('/docs', (_req, res) => res.redirect('/api-docs'));
+// Docs path already handled above
 
-// Welcome Page
-app.get('/', (_req: Request, res: Response) => {
-    res.send(getWelcomePage());
-});
-
-// APIs
-app.use('/api/auth', authRoutes);
+// API routes
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/workouts', workoutRoutes);
