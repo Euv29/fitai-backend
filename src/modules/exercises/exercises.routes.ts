@@ -66,7 +66,14 @@ router.use(authenticateToken);
  *         example: "0001"
  *     responses:
  *       200:
- *         description: OK
+ *         description: Detalhes do exercício retornados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object }
  */
 
 router.get('/', exercisesController.search);

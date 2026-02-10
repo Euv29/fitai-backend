@@ -52,6 +52,13 @@ router.post('/generate', workoutsController.generateWorkout);
  *     responses:
  *       200:
  *         description: Plano ativo retornado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object }
  */
 /**
  * @swagger
@@ -74,6 +81,13 @@ router.post('/generate', workoutsController.generateWorkout);
  *     responses:
  *       201:
  *         description: Treino registrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Sessão de treino registrada com sucesso" }
  */
 router.post('/log', workoutsController.logSession);
 

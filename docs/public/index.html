@@ -585,17 +585,38 @@
 
     function renderResponses(responses) {
       if (!responses) return '';
-      const list = Object.keys(responses).map(code => {
+
+      const sections = Object.keys(responses).map(code => {
         const r = responses[code];
-        return `<div class="text-xs flex gap-2">
-                    <span class="font-bold ${code.startsWith('2') ? 'text-green-500/80' : 'text-zinc-600'}">${code}</span>
-                    <span class="text-zinc-500">${r.description}</span>
-                </div>`;
-      }).join('');
+        let exampleHtml = '';
+
+        if (r.content && r.content['application/json'] && r.content['application/json'].schema) {
+          const example = getExampleFromSchema(r.content['application/json'].schema);
+          if (example) {
+            exampleHtml = `
+              <div class="mt-2">
+                <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-1">Exemplo de Resposta (${code})</p>
+                <pre class="language-json text-[10px]"><code>${JSON.stringify(example, null, 2)}</code></pre>
+              </div>
+            `;
+          }
+        }
+
+        return `
+          <div class="space-y-1">
+            <div class="text-xs flex gap-2">
+              <span class="font-bold ${code.startsWith('2') ? 'text-green-500/80' : 'text-zinc-600'}">${code}</span>
+              <span class="text-zinc-500">${r.description}</span>
+            </div>
+            ${exampleHtml}
+          </div>
+        `;
+      }).join('<div class="h-px bg-zinc-800/50 my-4"></div>');
+
       return `
-                <div class="space-y-2">
+                <div class="space-y-4">
                     <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Respostas</p>
-                    <div class="space-y-1">${list}</div>
+                    <div class="space-y-4">${sections}</div>
                 </div>
             `;
     }

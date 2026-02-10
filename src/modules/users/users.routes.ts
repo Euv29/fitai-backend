@@ -66,6 +66,14 @@ router.get('/profile', usersController.getProfile);
  *     responses:
  *       200:
  *         description: Perfil completado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Perfil atualizado com sucesso" }
+ *                 data: { type: object }
  */
 router.post(
     '/complete-profile',
@@ -84,6 +92,14 @@ router.post(
  *     responses:
  *       200:
  *         description: Perfil atualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Perfil atualizado com sucesso" }
+ *                 data: { type: object }
  */
 router.put('/profile', usersController.updateProfile);
 
@@ -98,6 +114,13 @@ router.put('/profile', usersController.updateProfile);
  *     responses:
  *       200:
  *         description: Agenda retornada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object }
  */
 router.get('/schedule', usersController.getWeeklySchedule);
 
@@ -110,8 +133,15 @@ router.get('/schedule', usersController.getWeeklySchedule);
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       204:
+ *       200:
  *         description: Conta excluída
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Conta deletada com sucesso" }
  */
 router.delete('/account', usersController.deleteAccount);
 
@@ -126,6 +156,13 @@ router.delete('/account', usersController.deleteAccount);
  *     responses:
  *       200:
  *         description: Lista de fotos retornada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: array, items: { type: object } }
  */
 router.get('/progress-photos', usersController.getProgressPhotos);
 

@@ -57,6 +57,13 @@ router.post('/message', checkUsageLimit('ai_chat_count'), chatController.sendMes
  *     responses:
  *       200:
  *         description: Lista de mensagens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: array, items: { type: object } }
  */
 router.get('/history', chatController.getHistory);
 

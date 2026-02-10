@@ -452,7 +452,6 @@ export class AuthService {
                 .eq('phone', phone)
                 .single();
 
-            let isNewUser = false;
 
             if (!user) {
                 // Create new user
@@ -474,7 +473,6 @@ export class AuthService {
                 }
 
                 user = newUser;
-                isNewUser = true;
 
                 // Create trial subscription
                 const trialEndsAt = new Date(

@@ -34,6 +34,13 @@ const authController = new AuthController();
  *     responses:
  *       200:
  *         description: Código enviado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Código de verificação enviado com sucesso" }
  */
 router.post(
     '/send-code',
@@ -71,10 +78,13 @@ router.post(
  *             schema:
  *               type: object
  *               properties:
- *                 token:
- *                   type: string
- *                 refreshToken:
- *                   type: string
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Login realizado com sucesso" }
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token: { type: string }
+ *                     refreshToken: { type: string }
  */
 router.post(
     '/verify-code',
@@ -99,7 +109,15 @@ router.post(
  *               email: { type: string, format: email }
  *               password: { type: string, minLength: 6 }
  *     responses:
- *       201: { description: Usuário criado, verifique o e-mail }
+ *       201:
+ *         description: Usuário criado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Usuário criado. Verifique seu e-mail." }
  */
 router.post(
     '/signup/email',
@@ -124,7 +142,20 @@ router.post(
  *               email: { type: string, format: email }
  *               code: { type: string }
  *     responses:
- *       200: { description: Login realizado }
+ *       200:
+ *         description: Login realizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Login realizado com sucesso" }
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token: { type: string }
+ *                     refreshToken: { type: string }
  */
 router.post(
     '/verify/email',
@@ -149,7 +180,20 @@ router.post(
  *               email: { type: string, format: email }
  *               password: { type: string }
  *     responses:
- *       200: { description: Login realizado }
+ *       200:
+ *         description: Login realizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Login realizado com sucesso" }
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token: { type: string }
+ *                     refreshToken: { type: string }
  */
 router.post(
     '/login/email',
@@ -173,7 +217,15 @@ router.post(
  *             properties:
  *               email: { type: string, format: email }
  *     responses:
- *       200: { description: Código enviado (se e-mail existir) }
+ *       200:
+ *         description: Código enviado (se e-mail existir)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Se o e-mail existir, um código foi enviado." }
  */
 router.post(
     '/forgot-password',
@@ -199,7 +251,15 @@ router.post(
  *               code: { type: string }
  *               newPassword: { type: string, minLength: 6 }
  *     responses:
- *       200: { description: Senha alterada }
+ *       200:
+ *         description: Senha alterada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Senha alterada com sucesso." }
  */
 router.post(
     '/reset-password',

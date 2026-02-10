@@ -26,6 +26,13 @@ router.use(authenticateToken);
  *     responses:
  *       200:
  *         description: Plano alimentar gerado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object }
  */
 router.post('/generate', checkUsageLimit('recipe_generation_count'), nutritionController.generatePlan);
 
@@ -46,6 +53,13 @@ router.post('/generate', checkUsageLimit('recipe_generation_count'), nutritionCo
  *     responses:
  *       200:
  *         description: Lista de receitas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: array, items: { type: object } }
  */
 router.get('/recipes', checkUsageLimit('recipe_generation_count'), nutritionController.searchRecipes);
 
@@ -73,5 +87,21 @@ router.post(
     upload.single('image'),
     nutritionController.analyzeFood
 );
+
+/**
+ * @swagger
+ * /api/v1/nutrition/analyze:
+ *   post:
+ *     responses:
+ *       200:
+ *         description: Análise da comida realizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object }
+ */
 
 export default router;

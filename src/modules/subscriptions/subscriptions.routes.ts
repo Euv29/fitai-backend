@@ -45,6 +45,13 @@ router.use(authenticateToken);
  *     responses:
  *       200:
  *         description: Status da assinatura
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object }
  */
 router.get('/', subscriptionsController.getSubscription);
 
@@ -72,7 +79,11 @@ router.get('/', subscriptionsController.getSubscription);
  *             schema:
  *               type: object
  *               properties:
- *                 url: { type: string, example: "https://checkout.stripe.com/..." }
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     url: { type: string, example: "https://checkout.stripe.com/..." }
  */
 router.post(
     '/checkout',
@@ -91,6 +102,13 @@ router.post(
  *     responses:
  *       200:
  *         description: Assinatura cancelada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Assinatura cancelada com sucesso" }
  */
 router.delete('/cancel', subscriptionsController.cancelSubscription);
 
