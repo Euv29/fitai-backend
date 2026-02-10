@@ -1,0 +1,179 @@
+{
+    "llm_prompt_instructions": {
+        "context": "Você é um especialista em API Design e Documentação. Seu objetivo é gerar documentação Swagger (OpenAPI 3.0) para novos módulos do FitAI Backend.",
+        "rules": [
+            "Siga rigorosamente o formato de resposta: { success: boolean, message?: string, data?: any }.",
+            "Todos os endpoints devem estar sob a tag do módulo (ex: Auth, Users, Chat).",
+            "Sempre inclua 'security: [{ bearerAuth: [] }]' para rotas protegidas.",
+            "O campo 'responses' deve detalhar o código HTTP (200, 201, 400, etc) e incluir o schema JSON correspondente.",
+            "Utilize os componentes reutilizáveis definidos na seção 'components/schemas'."
+        ],
+        "structure": {
+            "routes": "O arquivo '.routes.ts' deve conter o JSDoc @swagger acima de cada rota.",
+            "controllers": "O controlador deve retornar respostas JSON usando as constantes HTTP_STATUS e SUCCESS_MESSAGES."
+        }
+    },
+    "template": {
+        "openapi": "3.0.0",
+        "info": {
+            "title": "FitAI Modular API Template",
+            "version": "1.0.0",
+            "description": "Template completo para documentação de novos módulos via LLM"
+        },
+        "paths": {
+            "/api/v1/module/endpoint": {
+                "get": {
+                    "summary": "Descrição curta da operação",
+                    "description": "Explicação detalhada sobre o funcionamento e lógica do endpoint.",
+                    "tags": [
+                        "NomeDoModulo"
+                    ],
+                    "security": [
+                        {
+                            "bearerAuth": []
+                        }
+                    ],
+                    "parameters": [
+                        {
+                            "name": "paramName",
+                            "in": "query",
+                            "required": false,
+                            "schema": {
+                                "type": "string"
+                            },
+                            "example": "exemplo_valor"
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Operação realizada com sucesso",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/SuccessResponse"
+                                    },
+                                    "example": {
+                                        "success": true,
+                                        "message": "Dados processados",
+                                        "data": {
+                                            "item": "detalhes"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Não autorizado",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ErrorResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "post": {
+                    "summary": "Cria um novo recurso",
+                    "tags": [
+                        "NomeDoModulo"
+                    ],
+                    "security": [
+                        {
+                            "bearerAuth": []
+                        }
+                    ],
+                    "requestBody": {
+                        "required": true,
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "name"
+                                    ],
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Novo Item"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "201": {
+                            "description": "Recurso criado",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/CreatedResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "components": {
+            "securitySchemes": {
+                "bearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT"
+                }
+            },
+            "schemas": {
+                "SuccessResponse": {
+                    "type": "object",
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Operação concluída"
+                        },
+                        "data": {
+                            "type": "object",
+                            "description": "Contorno dos dados retornados"
+                        }
+                    }
+                },
+                "CreatedResponse": {
+                    "type": "object",
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Recurso criado com sucesso"
+                        },
+                        "data": {
+                            "type": "object"
+                        }
+                    }
+                },
+                "ErrorResponse": {
+                    "type": "object",
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "error": {
+                            "type": "string",
+                            "example": "Mensagem de erro detalhada"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
