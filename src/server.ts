@@ -121,7 +121,17 @@ app.use('/api/v1/nutrition', nutritionRoutes);
 // Swagger JSON Spec
 app.get('/api-docs.json', (_req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerSpec);
+    try {
+        if (!swaggerSpec) {
+            logger.error('Swagger Spec is undefined');
+            return res.status(500).json({ error: 'Swagger Spec not loaded' });
+        }
+        logger.info(`Serving Swagger Spec: ${JSON.stringify(swaggerSpec.info)}`);
+        res.send(swaggerSpec);
+    } catch (error) {
+        logger.error('Error serving Swagger Spec', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // =====================================================
