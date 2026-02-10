@@ -39,7 +39,9 @@ const options: swaggerJsdoc.Options = {
             },
         ],
     },
-    apis: ['./src/modules/**/*.routes.ts', './src/modules/**/*.controller.ts', './src/shared/types/*.ts'],
+    apis: process.env.NODE_ENV === 'production'
+        ? [] // Disable file scanning in Vercel/production to avoid path errors
+        : ['./src/modules/**/*.routes.ts', './src/modules/**/*.controller.ts', './src/shared/types/*.ts'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
