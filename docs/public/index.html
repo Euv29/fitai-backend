@@ -386,10 +386,8 @@
       const loaderText = document.querySelector('#loader p');
       try {
         if (loaderText) loaderText.innerText = 'Buscando especificações da API (/api-docs.json)...';
-        console.log('Fetching /api-docs.json...');
 
         const response = await fetch('/api-docs.json');
-        console.log('Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -397,7 +395,6 @@
 
         if (loaderText) loaderText.innerText = 'Processando JSON...';
         apiSpec = await response.json();
-        console.log('API Spec loaded:', apiSpec);
 
         if (loaderText) loaderText.innerText = 'Renderizando interface...';
         renderUI(apiSpec);
@@ -414,7 +411,8 @@
         }
 
       } catch (error) {
-        console.error('Failed to load API spec:', error);
+      } catch (error) {
+        // console.error('Failed to load API spec:', error);
         const errorMsg = error.message || error.toString();
 
         const descEl = document.getElementById('api-description');
