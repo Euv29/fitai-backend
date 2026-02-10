@@ -428,75 +428,76 @@
         `;
         }
       }
+    }
 
-      function renderUI(spec) {
-        // Safely update description if element exists, or leave default marketing text
-        // const descEl = document.getElementById('api-description');
-        // if (descEl && spec.info.description) descEl.innerText = spec.info.description;
+    function renderUI(spec) {
+      // Safely update description if element exists, or leave default marketing text
+      // const descEl = document.getElementById('api-description');
+      // if (descEl && spec.info.description) descEl.innerText = spec.info.description;
 
-        const statusEl = document.getElementById('api-status');
-        if (statusEl) {
-          statusEl.innerHTML = `<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> API Status: Online v${spec.info.version}`;
-        }
+      const statusEl = document.getElementById('api-status');
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> API Status: Online v${spec.info.version}`;
+      }
 
-        const sidebarNav = document.getElementById('sidebar-nav');
-        const mainContent = document.getElementById('main-content');
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const mainContent = document.getElementById('main-content');
 
-        // Group paths by tags
-        const tags = {};
-        Object.keys(spec.paths).forEach(path => {
-          const methods = spec.paths[path];
-          Object.keys(methods).forEach(method => {
-            const info = methods[method];
-            const tag = info.tags ? info.tags[0] : 'Geral';
-            if (!tags[tag]) tags[tag] = [];
-            tags[tag].push({ path, method, ...info });
-          });
+      // Group paths by tags
+      const tags = {};
+      Object.keys(spec.paths).forEach(path => {
+        const methods = spec.paths[path];
+        Object.keys(methods).forEach(method => {
+          const info = methods[method];
+          const tag = info.tags ? info.tags[0] : 'Geral';
+          if (!tags[tag]) tags[tag] = [];
+          tags[tag].push({ path, method, ...info });
         });
+      });
 
-        // Render Sidebar and Sections
-        Object.keys(tags).forEach(tag => {
-          const tagId = tag.toLowerCase().replace(/\s+/g, '-');
+      // Render Sidebar and Sections
+      Object.keys(tags).forEach(tag => {
+        const tagId = tag.toLowerCase().replace(/\s+/g, '-');
 
-          // Sidebar Group
-          const group = document.createElement('div');
-          group.className = 'sidebar-group';
-          group.innerHTML = `
+        // Sidebar Group
+        const group = document.createElement('div');
+        group.className = 'sidebar-group';
+        group.innerHTML = `
                     <a href="#${tagId}" class="px-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider mt-6 mb-2 block hover:text-zinc-100 transition-colors">${tag}</a>
                     <div id="nav-group-${tagId}" class="space-y-1 ml-1 border-l border-zinc-800"></div>
                 `;
-          sidebarNav.appendChild(group);
+        sidebarNav.appendChild(group);
 
-          const navGroup = group.querySelector(`#nav-group-${tagId}`);
+        const navGroup = group.querySelector(`#nav-group-${tagId}`);
 
-          // Main Tag Section
-          const section = document.createElement('section');
-          section.id = tagId;
-          section.className = 'section-content space-y-12 pb-24';
-          section.innerHTML = `<h2 class="text-3xl font-bold tracking-tight mb-8 text-white">${tag}</h2>`;
-          mainContent.appendChild(section);
+        // Main Tag Section
+        const section = document.createElement('section');
+        section.id = tagId;
+        section.className = 'section-content space-y-12 pb-24';
+        section.innerHTML = `<h2 class="text-3xl font-bold tracking-tight mb-8 text-white">${tag}</h2>`;
+        mainContent.appendChild(section);
 
-          tags[tag].forEach(endpoint => {
-            const endpointId = `${endpoint.method}-${endpoint.path.replace(/[\/\(\)\{\}]/g, '-')}`;
+        tags[tag].forEach(endpoint => {
+          const endpointId = `${endpoint.method}-${endpoint.path.replace(/[\/\(\)\{\}]/g, '-')}`;
 
-            // Sidebar sub-link
-            const subLink = document.createElement('a');
-            subLink.href = `#${endpointId}`;
-            subLink.id = `nav-${endpointId}`;
-            subLink.className = `nav-link flex items-center px-4 py-1 text-xs text-zinc-500 rounded-md hover:text-zinc-200 transition-colors`;
-            subLink.innerText = endpoint.summary || endpoint.path;
-            navGroup.appendChild(subLink);
+          // Sidebar sub-link
+          const subLink = document.createElement('a');
+          subLink.href = `#${endpointId}`;
+          subLink.id = `nav-${endpointId}`;
+          subLink.className = `nav-link flex items-center px-4 py-1 text-xs text-zinc-500 rounded-md hover:text-zinc-200 transition-colors`;
+          subLink.innerText = endpoint.summary || endpoint.path;
+          navGroup.appendChild(subLink);
 
-            // Endpoint Card Wrapper (for scrolling)
-            const anchor = document.createElement('div');
-            anchor.id = endpointId;
-            anchor.className = 'scroll-mt-24';
-            section.appendChild(anchor);
+          // Endpoint Card Wrapper (for scrolling)
+          const anchor = document.createElement('div');
+          anchor.id = endpointId;
+          anchor.className = 'scroll-mt-24';
+          section.appendChild(anchor);
 
-            // Card Content
-            const card = document.createElement('div');
-            card.className = 'border border-zinc-800 rounded-lg overflow-hidden bg-zinc-900/40 mt-4';
-            card.innerHTML = `
+          // Card Content
+          const card = document.createElement('div');
+          card.className = 'border border-zinc-800 rounded-lg overflow-hidden bg-zinc-900/40 mt-4';
+          card.innerHTML = `
                         <div class="px-4 py-3 bg-zinc-800/50 flex items-center justify-between border-b border-zinc-800">
                             <div class="flex items-center gap-3">
                                 <span class="method-badge method-${endpoint.method}">${endpoint.method}</span>
@@ -514,43 +515,43 @@
                             ${renderResponses(endpoint.responses)}
                         </div>
                     `;
-            anchor.appendChild(card);
-          });
+          anchor.appendChild(card);
         });
-      }
+      });
+    }
 
-      function getExampleFromSchema(schema) {
-        if (!schema) return null;
-        if (schema.example) return schema.example;
-        if (schema.properties) {
-          const example = {};
-          Object.keys(schema.properties).forEach(key => {
-            const prop = schema.properties[key];
-            if (prop.example) {
-              example[key] = prop.example;
-            } else if (prop.type === 'object') {
-              example[key] = getExampleFromSchema(prop);
-            } else if (prop.type === 'array') {
-              example[key] = [getExampleFromSchema(prop.items)];
-            } else {
-              example[key] = prop.type === 'string' ? "string" : (prop.type === 'boolean' ? true : 123);
-            }
-          });
-          return example;
-        }
-        return null;
+    function getExampleFromSchema(schema) {
+      if (!schema) return null;
+      if (schema.example) return schema.example;
+      if (schema.properties) {
+        const example = {};
+        Object.keys(schema.properties).forEach(key => {
+          const prop = schema.properties[key];
+          if (prop.example) {
+            example[key] = prop.example;
+          } else if (prop.type === 'object') {
+            example[key] = getExampleFromSchema(prop);
+          } else if (prop.type === 'array') {
+            example[key] = [getExampleFromSchema(prop.items)];
+          } else {
+            example[key] = prop.type === 'string' ? "string" : (prop.type === 'boolean' ? true : 123);
+          }
+        });
+        return example;
       }
+      return null;
+    }
 
-      function renderParameters(params) {
-        if (!params || params.length === 0) return '';
-        const rows = params.map(p => `
+    function renderParameters(params) {
+      if (!params || params.length === 0) return '';
+      const rows = params.map(p => `
                 <tr class="text-xs">
                     <td class="py-2 font-mono text-brand-500">${p.name}</td>
                     <td class="py-2 text-zinc-500 capitalize">${p.in}</td>
                     <td class="py-2 text-zinc-400">${p.description || '-'}</td>
                 </tr>
             `).join('');
-        return `
+      return `
                 <div class="space-y-2">
                     <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Parâmetros</p>
                     <table class="w-full">
@@ -561,75 +562,75 @@
                     </table>
                 </div>
             `;
-      }
+    }
 
-      function renderRequestBody(body) {
-        if (!body || !body.content) return '';
-        const content = body.content['application/json'];
-        if (!content || !content.schema) return '';
-        const example = getExampleFromSchema(content.schema);
-        if (!example) return '';
+    function renderRequestBody(body) {
+      if (!body || !body.content) return '';
+      const content = body.content['application/json'];
+      if (!content || !content.schema) return '';
+      const example = getExampleFromSchema(content.schema);
+      if (!example) return '';
 
-        return `
+      return `
                 <div class="space-y-2">
                     <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Exemplo de JSON</p>
                     <pre class="language-json text-xs"><code>${JSON.stringify(example, null, 2)}</code></pre>
                 </div>
             `;
-      }
+    }
 
-      function renderResponses(responses) {
-        if (!responses) return '';
-        const list = Object.keys(responses).map(code => {
-          const r = responses[code];
-          return `<div class="text-xs flex gap-2">
+    function renderResponses(responses) {
+      if (!responses) return '';
+      const list = Object.keys(responses).map(code => {
+        const r = responses[code];
+        return `<div class="text-xs flex gap-2">
                     <span class="font-bold ${code.startsWith('2') ? 'text-green-500/80' : 'text-zinc-600'}">${code}</span>
                     <span class="text-zinc-500">${r.description}</span>
                 </div>`;
-        }).join('');
-        return `
+      }).join('');
+      return `
                 <div class="space-y-2">
                     <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Respostas</p>
                     <div class="space-y-1">${list}</div>
                 </div>
             `;
+    }
+
+    function showSection(targetId) {
+      // Find parent section if target is an endpoint
+      let sectionId = targetId;
+      const endpointElement = document.getElementById(targetId);
+
+      if (endpointElement && endpointElement.closest('section')) {
+        sectionId = endpointElement.closest('section').id;
       }
 
-      function showSection(targetId) {
-        // Find parent section if target is an endpoint
-        let sectionId = targetId;
-        const endpointElement = document.getElementById(targetId);
-
-        if (endpointElement && endpointElement.closest('section')) {
-          sectionId = endpointElement.closest('section').id;
-        }
-
-        // Toggle visibility
-        document.querySelectorAll('.section-content').forEach(s => {
-          s.classList.toggle('active', s.id === sectionId);
-        });
-
-        // Update Active Link
-        document.querySelectorAll('.nav-link').forEach(l => {
-          const href = l.getAttribute('href').replace('#', '');
-          l.classList.toggle('active', href === targetId);
-        });
-
-        // Scroll into view if it's an endpoint
-        if (endpointElement) {
-          endpointElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        if (window.Prism) Prism.highlightAll();
-      }
-
-      window.addEventListener('load', initDocs);
-      window.addEventListener('hashchange', () => {
-        const hash = window.location.hash.replace('#', '');
-        if (hash) showSection(hash);
+      // Toggle visibility
+      document.querySelectorAll('.section-content').forEach(s => {
+        s.classList.toggle('active', s.id === sectionId);
       });
+
+      // Update Active Link
+      document.querySelectorAll('.nav-link').forEach(l => {
+        const href = l.getAttribute('href').replace('#', '');
+        l.classList.toggle('active', href === targetId);
+      });
+
+      // Scroll into view if it's an endpoint
+      if (endpointElement) {
+        endpointElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      if (window.Prism) Prism.highlightAll();
+    }
+
+    window.addEventListener('load', initDocs);
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) showSection(hash);
+    });
   </script>
 </body>
 
