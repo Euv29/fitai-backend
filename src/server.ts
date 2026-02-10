@@ -94,6 +94,22 @@ app.use((req: Request, _res: Response, next) => {
 // ROUTES
 // =====================================================
 
+// Swagger JSON Spec (Must be before static middleware to avoid shadowing)
+app.get('/api-docs.json', (_req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    try {
+        if (!swaggerSpec) {
+            logger.error('Swagger Spec is undefined');
+            return res.status(500).json({ error: 'Swagger Spec not loaded' });
+        }
+        logger.info(`Serving Swagger Spec: ${JSON.stringify(swaggerSpec.info)}`);
+        return res.send(swaggerSpec);
+    } catch (error) {
+        logger.error('Error serving Swagger Spec', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // Serve static documentation at root
 app.use(express.static(path.join(__dirname, '../docs/public')));
 app.use('/docs', express.static(path.join(__dirname, '../docs/public')));
@@ -118,21 +134,7 @@ app.use('/api/v1/exercises', exerciseRoutes);
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/nutrition', nutritionRoutes);
 
-// Swagger JSON Spec
-app.get('/api-docs.json', (_req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    try {
-        if (!swaggerSpec) {
-            logger.error('Swagger Spec is undefined');
-            return res.status(500).json({ error: 'Swagger Spec not loaded' });
-        }
-        logger.info(`Serving Swagger Spec: ${JSON.stringify(swaggerSpec.info)}`);
-        return res.send(swaggerSpec);
-    } catch (error) {
-        logger.error('Error serving Swagger Spec', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+// Swagger JSON Spec moved to top
 
 // =====================================================
 // ERROR HANDLING
