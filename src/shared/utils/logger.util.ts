@@ -18,6 +18,35 @@ const logFormat = printf(({ level, message, timestamp, stack, ...metadata }) => 
     return msg;
 });
 
+// Define transports based on environment
+const transports: winston.transport[] = [
+    new winston.transports.Console({
+        format: combine(
+            colorize(),
+            logFormat
+        ),
+    })
+];
+
+// Add file transports only in development
+if (process.env.NODE_ENV !== 'production') {
+    transports.push(
+        new winston.transports.File({
+            filename: path.join('logs', 'error.log'),
+            level: 'error',
+            maxsize: 5242880, // 5MB
+            maxFiles: 5,
+        })
+    );
+    transports.push(
+        new winston.transports.File({
+            filename: path.join('logs', 'combined.log'),
+            maxsize: 5242880, // 5MB
+            maxFiles: 5,
+        })
+    );
+}
+
 // Create logger instance
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
@@ -26,34 +55,15 @@ const logger = winston.createLogger({
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         logFormat
     ),
-    transports: [
-        // Console transport
-        new winston.transports.Console({
-            format: combine(
-                colorize(),
-                logFormat
-            ),
-        }),
-        // File transport for errors
-        new winston.transports.File({
-            filename: path.join('logs', 'error.log'),
-            level: 'error',
-            maxsize: 5242880, // 5MB
-            maxFiles: 5,
-        }),
-        // File transport for all logs
-        new winston.transports.File({
-            filename: path.join('logs', 'combined.log'),
-            maxsize: 5242880, // 5MB
-            maxFiles: 5,
-        }),
-    ],
-    exceptionHandlers: [
-        new winston.transports.File({ filename: path.join('logs', 'exceptions.log') }),
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({ filename: path.join('logs', 'rejections.log') }),
-    ],
+    transports,
+    // Only log exceptions to file in dev
+    exceptionHandlers: process.env.NODE_ENV !== 'production' ? [
+        new winston.transports.File({ filename: path.join('logs', 'exceptions.log') })
+    ] : [],
+    // Only log rejections to file in dev
+    rejectionHandlers: process.env.NODE_ENV !== 'production' ? [
+        new winston.transports.File({ filename: path.join('logs', 'rejections.log') })
+    ] : [],
 });
 
 export default logger;
