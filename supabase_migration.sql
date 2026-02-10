@@ -9,7 +9,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- =============================================
 CREATE TABLE IF NOT EXISTS public.users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    phone TEXT UNIQUE NOT NULL,
+    phone TEXT UNIQUE,
     phone_country_code TEXT DEFAULT '+351',
     name TEXT,
     email TEXT,
@@ -28,8 +28,11 @@ CREATE TABLE IF NOT EXISTS public.users (
     units TEXT DEFAULT 'metric' CHECK (units IN ('metric', 'imperial')),
     notifications_enabled BOOLEAN DEFAULT true,
     profile_completed BOOLEAN DEFAULT false,
+    password_hash TEXT, -- For email/password auth
+    email_verified BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT users_contact_check CHECK (phone IS NOT NULL OR email IS NOT NULL)
 );
 
 -- =============================================
@@ -37,8 +40,10 @@ CREATE TABLE IF NOT EXISTS public.users (
 -- =============================================
 CREATE TABLE IF NOT EXISTS public.verification_codes (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    phone TEXT NOT NULL,
+    phone TEXT,
+    email TEXT,
     code_hash TEXT NOT NULL,
+    CONSTRAINT verification_codes_contact_check CHECK (phone IS NOT NULL OR email IS NOT NULL),
     expires_at TIMESTAMPTZ NOT NULL,
     attempts INTEGER DEFAULT 0,
     verified BOOLEAN DEFAULT false,
