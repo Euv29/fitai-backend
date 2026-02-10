@@ -17,3 +17,5 @@ coverage/
 *.swo
 uploads/
 temp/
+.vercel
+.env*.local

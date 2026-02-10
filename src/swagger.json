@@ -1,0 +1,828 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FitAI API",
+    "version": "1.0.0",
+    "description": "API oficial do FitAI - Inteligência Artificial para Fitness",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "contact": {
+      "name": "Suporte FitAI",
+      "url": "https://fitai.com/support",
+      "email": "support@fitai.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor Principal"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/send-code": {
+      "post": {
+        "summary": "Envia código de verificação",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "phone"
+                ],
+                "properties": {
+                  "phone": {
+                    "type": "string",
+                    "description": "Número de telefone com código do país (E.164)",
+                    "example": "+351912345678"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Código enviado com sucesso"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify-code": {
+      "post": {
+        "summary": "Verifica o código e realiza login",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "phone",
+                  "code"
+                ],
+                "properties": {
+                  "phone": {
+                    "type": "string",
+                    "example": "+351912345678"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/message": {
+      "post": {
+        "summary": "Envia uma mensagem para o Coach IA",
+        "tags": [
+          "Chat"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Como devo fazer agachamento corretamente?"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta da IA recebida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "content": {
+                          "type": "string",
+                          "example": "Olá! Para o agachamento..."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/chat/history": {
+      "get": {
+        "summary": "Obtém o histórico de mensagens do usuário",
+        "tags": [
+          "Chat"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de mensagens"
+          }
+        }
+      }
+    },
+    "/api/v1/exercises": {
+      "get": {
+        "summary": "Busca exercícios com filtros",
+        "description": "Retorna uma lista de exercícios permitindo filtrar por nome, grupo muscular ou equipamento.",
+        "tags": [
+          "Exercises"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "example": "bench press"
+          },
+          {
+            "in": "query",
+            "name": "bodyPart",
+            "schema": {
+              "type": "string"
+            },
+            "example": "chest"
+          },
+          {
+            "in": "query",
+            "name": "equipment",
+            "schema": {
+              "type": "string"
+            },
+            "example": "barbell"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de exercícios retornada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "0001"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Bench Press"
+                          },
+                          "body_part": {
+                            "type": "string",
+                            "example": "chest"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/exercises/{id}": {
+      "get": {
+        "summary": "Detalhes de um exercício",
+        "description": "Retorna informações completas de um exercício pelo ID.",
+        "tags": [
+          "Exercises"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "0001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/nutrition/generate": {
+      "post": {
+        "summary": "Gera um plano alimentar personalizado",
+        "tags": [
+          "Nutrition"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plano alimentar gerado"
+          }
+        }
+      }
+    },
+    "/api/v1/nutrition/recipes": {
+      "get": {
+        "summary": "Busca receitas saudáveis",
+        "tags": [
+          "Nutrition"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "smoothie de proteína"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de receitas"
+          }
+        }
+      }
+    },
+    "/api/v1/nutrition/analyze": {
+      "post": {
+        "summary": "Analisa uma foto de comida",
+        "tags": [
+          "Nutrition"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/webhook": {
+      "post": {
+        "summary": "Webhook do Stripe para eventos de pagamento",
+        "description": "Endpoint público consumido pelo Stripe.",
+        "tags": [
+          "Subscriptions"
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento processado"
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions": {
+      "get": {
+        "summary": "Obtém status da assinatura do usuário",
+        "tags": [
+          "Subscriptions"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status da assinatura"
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/checkout": {
+      "post": {
+        "summary": "Cria uma sessão de checkout do Stripe",
+        "tags": [
+          "Subscriptions"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "priceId": {
+                    "type": "string",
+                    "example": "price_H5ggY..."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sessão criada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://checkout.stripe.com/..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/cancel": {
+      "delete": {
+        "summary": "Cancela a assinatura atual",
+        "tags": [
+          "Subscriptions"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Assinatura cancelada"
+          }
+        }
+      }
+    },
+    "/api/v1/users/profile": {
+      "get": {
+        "summary": "Obtém o perfil do usuário logado",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil retornado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "uuid-v4"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "full_name": {
+                          "type": "string",
+                          "example": "João Silva"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza dados do perfil",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil atualizado"
+          }
+        }
+      }
+    },
+    "/api/v1/users/complete-profile": {
+      "post": {
+        "summary": "Completa o perfil após cadastro inicial",
+        "description": "Define objetivos, experiência, equipamentos e lesões.",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "goal": {
+                    "type": "string",
+                    "example": "weight_loss",
+                    "enum": [
+                      "weight_loss",
+                      "muscle_gain",
+                      "fitness",
+                      "flexibility"
+                    ]
+                  },
+                  "experience_level": {
+                    "type": "string",
+                    "example": "beginner",
+                    "enum": [
+                      "beginner",
+                      "intermediate",
+                      "advanced"
+                    ]
+                  },
+                  "available_equipment": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "dumbbells",
+                      "bench"
+                    ]
+                  },
+                  "injuries": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "lower_back"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Perfil completado com sucesso"
+          }
+        }
+      }
+    },
+    "/api/v1/users/schedule": {
+      "get": {
+        "summary": "Obtém a agenda semanal de treinos",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agenda retornada"
+          }
+        }
+      }
+    },
+    "/api/v1/users/account": {
+      "delete": {
+        "summary": "Exclui a conta do usuário",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Conta excluída"
+          }
+        }
+      }
+    },
+    "/api/v1/users/progress-photos": {
+      "get": {
+        "summary": "Obtém as fotos de progresso do usuário",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de fotos retornada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Faz upload de uma foto de progresso",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "weight": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workouts/generate": {
+      "post": {
+        "summary": "Gera um novo plano de treino personalizado",
+        "description": "Utiliza o Gemini AI para criar um programa de 4 semanas adaptado ao perfil do usuário (objetivos, equipamentos, lesões).",
+        "tags": [
+          "Workouts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Treino gerado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Programa de treino gerado com sucesso"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "uuid-v4"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Hipertrofia Adaptada"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workouts/active": {
+      "get": {
+        "summary": "Recupera o plano de treino ativo do usuário",
+        "tags": [
+          "Workouts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plano ativo retornado com sucesso"
+          }
+        }
+      }
+    },
+    "/api/v1/workouts/log": {
+      "post": {
+        "summary": "Registra a conclusão de uma sessão de treino",
+        "tags": [
+          "Workouts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "session_id": {
+                    "type": "string"
+                  },
+                  "duration_minutes": {
+                    "type": "number"
+                  },
+                  "exercises": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Treino registrado"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "API de autenticação e verificação"
+    },
+    {
+      "name": "Chat",
+      "description": "Chat interativo com Coach IA (Gemini)"
+    },
+    {
+      "name": "Nutrition",
+      "description": "Planejamento nutricional e receitas com IA"
+    },
+    {
+      "name": "Subscriptions",
+      "description": "Gestão de pagamentos e assinaturas (Stripe)"
+    },
+    {
+      "name": "Users",
+      "description": "Gestão de perfil e usuários"
+    },
+    {
+      "name": "Workouts",
+      "description": "Geração e gestão de treinos por IA"
+    }
+  ]
+}
