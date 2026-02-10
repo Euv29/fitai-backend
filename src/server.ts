@@ -15,7 +15,9 @@ import workoutRoutes from './modules/workouts/workouts.routes';
 import exerciseRoutes from './modules/exercises/exercises.routes';
 import chatRoutes from './modules/chat/chat.routes';
 import nutritionRoutes from './modules/nutrition/nutrition.routes';
+import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.config';
+import { getWelcomePage } from './views/welcome.view';
 
 // Load environment variables
 dotenv.config();
@@ -107,12 +109,17 @@ app.get('/health', (_req: Request, res: Response) => {
     });
 });
 
-// Serve Slate Documentation
-import path from 'path';
-app.use('/docs', express.static(path.join(__dirname, '../docs/public')));
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/docs', (_req, res) => res.redirect('/api-docs'));
 
-// API routes
-app.use('/api/v1/auth', authRoutes);
+// Welcome Page
+app.get('/', (_req: Request, res: Response) => {
+    res.send(getWelcomePage());
+});
+
+// APIs
+app.use('/api/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/workouts', workoutRoutes);
